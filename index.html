@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Ultimate Useless Button Game</title>
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    #container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #message {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+      max-width: 80%;
+    }
+
+    .useless-button {
+      font-size: 2rem;
+      padding: 1.5rem 3rem;
+      background: linear-gradient(to bottom, #ff4747, #c0392b);
+      color: white;
+      border: none;
+      border-radius: 1rem;
+      box-shadow: 0 10px #922b21;
+      cursor: pointer;
+      transform: scale(1);
+      transition: all 0.1s ease;
+    }
+
+    .useless-button:active {
+      transform: translateY(5px);
+      box-shadow: 0 5px #922b21;
+    }
+
+    #stopwatch {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 2rem;
+      color: #00ff00;
+      font-weight: bold;
+      font-family: monospace;
+    }
+
+    #achievement {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background-color: #222;
+      color: #0f0;
+      padding: 1rem 2rem;
+      border-radius: 10px;
+      font-size: 1.5rem;
+      font-weight: bold;
+      box-shadow: 0 0 15px #0f0;
+      display: none;
+      animation: fadeInOut 5s ease-in-out;
+    }
+
+    #leaderboard {
+      position: absolute;
+      top: 20px;
+      left: 30px;
+      background: white;
+      color: black;
+      font-family: monospace;
+      font-size: 1rem;
+      text-align: left;
+      padding: 1rem;
+      border-radius: 10px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    #leaderboard h2 {
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .gold { color: goldenrod; font-weight: bold; }
+    .silver { color: silver; font-weight: bold; }
+    .bronze { color: #cd7f32; font-weight: bold; }
+    .black { color: black; }
+
+    .fake-ad {
+      position: absolute;
+      width: 220px;
+      height: 100px;
+      background-color: #ff69b4;
+      color: black;
+      font-weight: bold;
+      font-size: 1rem;
+      padding: 1rem;
+      box-shadow: 0 0 15px hotpink;
+      border-radius: 8px;
+      z-index: 1000;
+    }
+
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: translateY(20px); }
+      10% { opacity: 1; transform: translateY(0); }
+      90% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(20px); }
+    }
+  </style>
+</head>
+<body>
+  <div id="stopwatch">00:00</div>
+
+  <div id="leaderboard">
+    <h2>LEADERBOARDS</h2>
+    <div class="gold">1st: †R3vn0m</div>
+    <div class="silver">2nd: Ξg0██p1x</div>
+    <div class="bronze">3rd: ╫sκul†drain╫</div>
+    <div class="black">4th: _v1Ru$</div>
+    <div class="black">5th: ]H@v0k]</div>
+    <div class="black">6th: †∅xÎ†</div>
+    <div class="black">7th: -cr∆sh-</div>
+    <div class="black">8th: p̷u̷l̷s̷e̷</div>
+    <div class="black">9th: ▓gl1tch▓</div>
+    <div class="black">10th: !wr4!th!</div>
+    <div class="black">...</div>
+    <div class="black" style="margin-top: 0.5rem; color: green; font-weight: bold;">3476th: You</div>
+  </div>
+
+  <div id="container">
+    <div id="message">Press To Start...</div>
+    <button class="useless-button" id="uselessBtn">PRESS ME</button>
+  </div>
+
+  <div id="achievement">Achievement Unlocked: Have No Life</div>
+  <audio id="clickSound" src="https://www.soundjay.com/button/beep-07.wav"></audio>
+
+  <div class="fake-ad" id="ad1" style="top: 80px; left: 50%; transform: translateX(-50%); display: none;">
+    GET PREGNANT NOW! 💖✨ Click here to change your life!
+  </div>
+
+  <div class="fake-ad" id="ad2" style="bottom: 80px; right: 40px; display: none;">
+    FREE IPHONE IF YOU CLICK FAST! 📱💥
+  </div>
+
+  <script>
+    const btn = document.getElementById("uselessBtn");
+    const msg = document.getElementById("message");
+    const achievement = document.getElementById("achievement");
+    const clickSound = document.getElementById("clickSound");
+    const ad1 = document.getElementById("ad1");
+    const ad2 = document.getElementById("ad2");
+
+    let count = 0;
+    let cooldown = false;
+
+    const messages = {
+      1: "...well you started and it ended already, bye",
+      10: "Why are you still here?! It does nothing at all!",
+      20: "...",
+      30: "I said leave...",
+      34: "BRO WHAT IS THIS AD?!",
+      40: "There's no reason you are still here.",
+      50: "Are you unemployed or something?",
+      60: "I'm starting to believe you're a Discord Mod tbh...",
+      67: "ANOTHER AD? bro ur being farmed rn.",
+      70: "Bro get a job fr man🙏",
+      80: "Bro your poor parents they would be sad you ended up this useless😔",
+      90: "Bro I have tried anything to get you off this website, why are you still here?",
+      100: "That's it. I'm not going to talk to you anymore...",
+      200: "You still here?",
+      300: "Get a life man.",
+      400: "This is serious, I want you to leave it's not about joking anymore just leave man this website isn't even fun at all it was made by a 13 y/o😭🙏",
+      500: "I'm really not talking anymore from now on, bye.",
+      1000: "YOU'VE FINISHED THE GAME! CONGRATULATIONS!!!"
+    };
+
+    btn.addEventListener("click", () => {
+      if (cooldown || count >= 1000) return;
+      clickSound.play();
+
+      count++;
+      cooldown = true;
+      setTimeout(() => cooldown = false, 3000);
+
+      if (messages[count]) {
+        msg.textContent = messages[count];
+      }
+
+      if (count === 34) {
+        ad1.style.display = 'block';
+      }
+      if (count === 67) {
+        ad2.style.display = 'block';
+      }
+
+      if (count === 1000) {
+        btn.disabled = true;
+        btn.style.cursor = "not-allowed";
+        achievement.style.display = "block";
+        setTimeout(() => achievement.style.display = "none", 5000);
+      }
+    });
+
+    // Stopwatch logic
+    const stopwatch = document.getElementById("stopwatch");
+    let seconds = 0;
+
+    setInterval(() => {
+      seconds++;
+      let min = String(Math.floor(seconds / 60)).padStart(2, '0');
+      let sec = String(seconds % 60).padStart(2, '0');
+      stopwatch.textContent = `${min}:${sec}`;
+    }, 1000);
+  </script>
+</body>
+</html>
